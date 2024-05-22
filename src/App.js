@@ -42,7 +42,7 @@ function App() {
             }
           />
           <Route
-            path="/rest"
+            path="/rest/"
             element={
               <PrivateRoute>
                 <RestaurantRegister />
