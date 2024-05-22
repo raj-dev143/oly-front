@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Radio, RadioGroup, FormControl, FormLabel } from "@mui/material";
 
 import Avatar from "@mui/material/Avatar";
@@ -23,6 +24,8 @@ const RegistrationForm = () => {
   const [userType, setUserType] = useState("member");
   const [message, setMessage] = useState("");
 
+  const navigate = useNavigate();
+
   const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 
   const handleSubmit = async (e) => {
@@ -34,6 +37,7 @@ const RegistrationForm = () => {
         userType,
       });
       setMessage(response.data.message);
+      navigate("/login");
     } catch (error) {
       setMessage(error.response.data.message);
     }
@@ -81,14 +85,14 @@ const RegistrationForm = () => {
             <Box sx={{ mt: 1, maxWidth: 600 }}>
               <form onSubmit={handleSubmit}>
                 <TextField
-                  label="Email"
+                  label="Member Id"
                   variant="outlined"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   fullWidth
                   margin="normal"
                   required
-                  type="email"
+                  type="text"
                 />
                 <TextField
                   label="Password"
@@ -113,11 +117,6 @@ const RegistrationForm = () => {
                       value="member"
                       control={<Radio />}
                       label="Member"
-                    />
-                    <FormControlLabel
-                      value="restaurant"
-                      control={<Radio />}
-                      label="Restaurant User"
                     />
                   </RadioGroup>
                 </FormControl>

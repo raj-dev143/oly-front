@@ -15,8 +15,13 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  const logout = () => {
+    localStorage.removeItem("userEmail");
+    setIsAuthenticated(false);
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated }}>
+    <AuthContext.Provider value={{ isAuthenticated, logout }}>
       {children}
     </AuthContext.Provider>
   );

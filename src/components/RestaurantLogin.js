@@ -17,10 +17,10 @@ import { Radio, RadioGroup, FormControl, FormLabel } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Copyright from "./Copyright";
 
-const LoginForm = () => {
+const RestaurantLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loginType, setLoginType] = useState("member");
+  const [loginType, setLoginType] = useState("restaurant");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
@@ -98,14 +98,14 @@ const LoginForm = () => {
             <Box sx={{ mt: 1, maxWidth: 600 }}>
               <form onSubmit={handleSubmit}>
                 <TextField
-                  label="Member Id"
+                  label="Email"
                   variant="outlined"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   fullWidth
                   margin="normal"
                   required
-                  type="text"
+                  type="email"
                 />
                 <TextField
                   label="Password"
@@ -127,9 +127,9 @@ const LoginForm = () => {
                     onChange={(e) => setLoginType(e.target.value)}
                   >
                     <FormControlLabel
-                      value="member"
+                      value="restaurant"
                       control={<Radio />}
-                      label="Member"
+                      label="Restaurant"
                     />
                   </RadioGroup>
                 </FormControl>
@@ -155,7 +155,7 @@ const LoginForm = () => {
               </form>
               <Grid container>
                 <Grid item>
-                  <Link to="/" variant="body2">
+                  <Link to="/rest/" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
@@ -169,4 +169,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RestaurantLogin;

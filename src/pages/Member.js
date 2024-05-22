@@ -39,10 +39,11 @@ const Member = () => {
       try {
         const response = await axios.get(`${apiFetchUrl}/member/`);
         if (response.data.status && response.data.data) {
-          const email = localStorage.getItem("userEmail");
+          const email = localStorage.getItem("userEmail")?.toUpperCase();
           setUserEmail(email);
+
           const filteredMembers = response.data.data.filter(
-            (member) => member.email === email
+            (member) => member.memberUniqueId.toUpperCase() === email
           );
 
           const updatedMembers = await Promise.all(

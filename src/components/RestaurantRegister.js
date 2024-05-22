@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Radio, RadioGroup, FormControl, FormLabel } from "@mui/material";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -11,48 +11,35 @@ import { Link } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import { Radio, RadioGroup, FormControl, FormLabel } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Copyright from "./Copyright";
 
-const LoginForm = () => {
+import axios from "axios";
+
+const RestaurantRegister = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loginType, setLoginType] = useState("member");
+  const [userType, setUserType] = useState("restaurant");
   const [message, setMessage] = useState("");
+
   const navigate = useNavigate();
 
   const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!loginType) {
-      setMessage("Please select a user type.");
-      return;
-    }
     try {
-      const response = await axios.post(`${apiBaseUrl}/api/auth/login`, {
+      const response = await axios.post(`${apiBaseUrl}/api/auth/register`, {
         email,
         password,
-        loginType,
+        userType,
       });
-      if (response.data.userType !== loginType) {
-        setMessage("Invalid user type.");
-        return;
-      }
-      setMessage("Login successful");
-      // Save token and user email to local storage
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("userType", response.data.userType);
-      localStorage.setItem("userEmail", email); // Store user's email
-      // Redirect to dashboard
-      navigate("/dashboard");
+      setMessage(response.data.message);
+      navigate("/rest/login");
     } catch (error) {
-      setMessage(
-        error.response?.data?.error || "An error occurred during login"
-      );
+      setMessage(error.response.data.message);
     }
   };
 
@@ -90,22 +77,22 @@ const LoginForm = () => {
             }}
           >
             <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LockOpenIcon />
+              <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Sign In
+              Sign Up
             </Typography>
             <Box sx={{ mt: 1, maxWidth: 600 }}>
               <form onSubmit={handleSubmit}>
                 <TextField
-                  label="Member Id"
+                  label="Email"
                   variant="outlined"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   fullWidth
                   margin="normal"
                   required
-                  type="text"
+                  type="email"
                 />
                 <TextField
                   label="Password"
@@ -117,19 +104,19 @@ const LoginForm = () => {
                   margin="normal"
                   required
                 />
-                <FormControl component="fieldset" sx={{ mt: 2 }} required>
-                  <FormLabel component="legend">Login as:</FormLabel>
+                <FormControl component="fieldset" sx={{ mt: 2 }}>
+                  <FormLabel component="legend">Register as:</FormLabel>
                   <RadioGroup
                     row
-                    aria-label="loginType"
-                    name="loginType"
-                    value={loginType}
-                    onChange={(e) => setLoginType(e.target.value)}
+                    aria-label="userType"
+                    name="userType"
+                    value={userType}
+                    onChange={(e) => setUserType(e.target.value)}
                   >
                     <FormControlLabel
-                      value="member"
+                      value="restaurant"
                       control={<Radio />}
-                      label="Member"
+                      label="Restaurant"
                     />
                   </RadioGroup>
                 </FormControl>
@@ -139,12 +126,12 @@ const LoginForm = () => {
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
                 >
-                  Sign In
+                  Sign Up
                 </Button>
                 {message && (
                   <p
                     style={{
-                      color: "red",
+                      color: "green",
                       fontStyle: "italic",
                       textAlign: "center",
                     }}
@@ -155,8 +142,8 @@ const LoginForm = () => {
               </form>
               <Grid container>
                 <Grid item>
-                  <Link to="/" variant="body2">
-                    {"Don't have an account? Sign Up"}
+                  <Link to="/rest/login" variant="body2">
+                    {"Already have an account? Sign In"}
                   </Link>
                 </Grid>
               </Grid>
@@ -169,4 +156,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RestaurantRegister;
