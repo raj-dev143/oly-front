@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Radio, RadioGroup, FormControl, FormLabel } from "@mui/material";
-
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -15,7 +14,6 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Copyright from "./Copyright";
-
 import axios from "axios";
 
 const RegistrationForm = () => {
@@ -23,13 +21,36 @@ const RegistrationForm = () => {
   const [password, setPassword] = useState("");
   const [userType, setUserType] = useState("member");
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
   const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+  const apiFetchUrl = process.env.REACT_APP_API_FETCH_URL;
+
+  const checkMemberUniqueId = async (memberUniqueId) => {
+    try {
+      const response = await axios.get(`${apiFetchUrl}/member/`);
+      if (response.data.status && response.data.data) {
+        const existingMember = response.data.data.find(
+          (member) =>
+            member.memberUniqueId.toUpperCase() === memberUniqueId.toUpperCase()
+        );
+        return existingMember !== undefined;
+      }
+    } catch (error) {
+      console.error("Error checking member unique ID:", error);
+    }
+    return false;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const isMemberUniqueIdAvailable = await checkMemberUniqueId(email);
+    if (!isMemberUniqueIdAvailable) {
+      setError("Member Unique ID not found.");
+      return;
+    }
     try {
       const response = await axios.post(`${apiBaseUrl}/api/auth/register`, {
         email,
@@ -37,7 +58,7 @@ const RegistrationForm = () => {
         userType,
       });
       setMessage(response.data.message);
-      navigate("/login");
+      navigate("/rest/login");
     } catch (error) {
       setMessage(error.response.data.message);
     }
@@ -137,6 +158,17 @@ const RegistrationForm = () => {
                     }}
                   >
                     {message}
+                  </p>
+                )}
+                {error && (
+                  <p
+                    style={{
+                      color: "red",
+                      fontStyle: "italic",
+                      textAlign: "center",
+                    }}
+                  >
+                    {error}
                   </p>
                 )}
               </form>
