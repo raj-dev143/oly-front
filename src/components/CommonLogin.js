@@ -17,10 +17,9 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Copyright from "./Copyright";
 import LeftSidebar from "./common/LeftSidebar";
 
-const LoginForm = () => {
+const CommonLogin = ({ loginType }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loginType, setLoginType] = useState("member");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
@@ -28,26 +27,16 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!loginType) {
-      setMessage("Please select a user type.");
-      return;
-    }
     try {
       const response = await axios.post(`${apiBaseUrl}/api/auth/login`, {
         email,
         password,
         loginType,
       });
-      if (response.data.userType !== loginType) {
-        setMessage("Invalid user type.");
-        return;
-      }
       setMessage("Login successful");
-      // Save token and user email to local storage
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("userType", response.data.userType);
-      localStorage.setItem("userEmail", email); // Store user's email
-      // Redirect to dashboard
+      localStorage.setItem("userEmail", email);
       navigate("/dashboard");
     } catch (error) {
       setMessage(
@@ -81,14 +70,14 @@ const LoginForm = () => {
             <Box sx={{ mt: 1, maxWidth: 600 }}>
               <form onSubmit={handleSubmit}>
                 <TextField
-                  label="Member Id"
+                  label="Email"
                   variant="outlined"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   fullWidth
                   margin="normal"
                   required
-                  type="text"
+                  type="email"
                 />
                 <TextField
                   label="Password"
@@ -107,12 +96,14 @@ const LoginForm = () => {
                     aria-label="loginType"
                     name="loginType"
                     value={loginType}
-                    onChange={(e) => setLoginType(e.target.value)}
+                    onChange={() => {}}
                   >
                     <FormControlLabel
-                      value="member"
+                      value={loginType}
                       control={<Radio />}
-                      label="Member"
+                      label={
+                        loginType === "restaurant" ? "Restaurant" : "Member"
+                      }
                     />
                   </RadioGroup>
                 </FormControl>
@@ -138,7 +129,10 @@ const LoginForm = () => {
               </form>
               <Grid container>
                 <Grid item>
-                  <Link to="/" variant="body2">
+                  <Link
+                    to={loginType === "restaurant" ? "/rest" : "/"}
+                    variant="body2"
+                  >
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
@@ -152,4 +146,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default CommonLogin;
