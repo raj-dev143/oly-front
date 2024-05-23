@@ -58,7 +58,7 @@ const RegistrationForm = () => {
         userType,
       });
       setMessage(response.data.message);
-      navigate("/rest/login");
+      navigate("/login");
     } catch (error) {
       setMessage(error.response.data.message);
     }
