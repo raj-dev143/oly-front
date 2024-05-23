@@ -42,11 +42,11 @@ function App() {
             }
           />
           <Route
-            path="/rest/"
+            path="/rest"
             element={
-              <PrivateRoute>
+              <PublicRoute>
                 <RestaurantRegister />
-              </PrivateRoute>
+              </PublicRoute>
             }
           />
           <Route
